@@ -1,3 +1,5 @@
+package test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public class Cluster {
     public Point centroid;
     public int id;
 
-    //Creates a new Cluster
+    //Creates a new test.Cluster
     public Cluster(int id) {
         this.id = id;
         this.points = new ArrayList<Point>();
@@ -72,14 +74,14 @@ public class Cluster {
     }
 
     public List<Point> plotCluster() {
-        System.out.println("[Cluster: " + id+"]");
+        System.out.println("[test.Cluster: " + id+"]");
         System.out.println("[Centroid: " + centroid + "]");
         System.out.println("[Points: \n");
         for(Point p : points) {
             System.out.println(p);
         }
         System.out.println("]");
-        System.out.println("Overall Performance of Cluster "+id+": "+(int)Performance()+"("+PerformanceEq(Performance())+")");
+        System.out.println("Overall Performance of test.Cluster "+id+": "+(int)Performance()+"("+PerformanceEq(Performance())+")");
         return points;
     }
 

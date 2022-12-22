@@ -1,3 +1,5 @@
+package test;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +11,7 @@ public class Point {
     private int cluster_number = 0;
     public static int size;
 
-    /*public Point(double... x)
+    /*public test.Point(double... x)
     {
 
     	var = new ArrayList<Double>();

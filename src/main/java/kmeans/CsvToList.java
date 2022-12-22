@@ -1,3 +1,5 @@
+package kmeans;
+
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.HeaderColumnNameTranslateMappingStrategy;
@@ -54,14 +56,14 @@ public class CsvToList {
         }
         CsvToBean csvToBean = new CsvToBean();
 
-        // call the parse method of CsvToBean
+        // call the parse method of CsvToList
         // pass strategy, csvReader to parse method
         List<Student> list = csvToBean.parse(strategy, csvReader);
 
         // print details of Bean object
-        for (Student e : list) {
+        /*for (Student e : list) {
             System.out.println(e);
-        }
+        }*/
         return list;
     }
 }

@@ -1,5 +1,11 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 public class Student {
 //    private int id;
     private Gender gender;
@@ -9,6 +15,68 @@ public class Student {
     private TestPreparationCourse testPreparationCourse;
     private int mathScore,readingScore,writingScore;
 
+    private int cluster_number = 0;
+    public static int size;
+
+
+    public void setCluster(int n) {
+        this.cluster_number = n;
+    }
+
+    public int getCluster() {
+        return this.cluster_number;
+    }
+
+    //Calculates the distance between two points.
+    public static double distance(Student s, Student centroid) {
+        double dis = 0;
+
+        for(int start=0;start<s.getList().size();start++){
+            dis=dis+Math.pow(s.getList().get(start)-centroid.getList().get(start),2);
+        }
+        dis=Math.sqrt(dis);
+        return dis;
+    }
+
+    public List<Integer> getList(){
+        List<Integer> list = new ArrayList<>();
+        list.addAll(Arrays.asList(gender.getValue(gender),
+                race.getValue(race),
+                parentalLevelOfEducation.getValue(parentalLevelOfEducation),
+                lunch.getValue(lunch),
+                testPreparationCourse.getValue(testPreparationCourse),
+                mathScore,
+                readingScore,
+                writingScore));
+        return list;
+    }
+    public Student() {
+    }
+
+    public Student(Gender gender, Race race, ParentalLevelOfEducation parentalLevelOfEducation, Lunch lunch, TestPreparationCourse testPreparationCourse, int mathScore, int readingScore, int writingScore) {
+        this.gender = gender;
+        this.race = race;
+        this.parentalLevelOfEducation = parentalLevelOfEducation;
+        this.lunch = lunch;
+        this.testPreparationCourse = testPreparationCourse;
+        this.mathScore = mathScore;
+        this.readingScore = readingScore;
+        this.writingScore = writingScore;
+    }
+
+    public Student randomStudent(){
+        Student student = new Student();
+        student.setGender(Math.random()>0.5?Gender.female:Gender.male);
+        student.setRace(Math.random()>0.5?Race.groupA:Race.groupB);
+        student.setParentalLevelOfEducation(Math.random()>0.5?ParentalLevelOfEducation.associatedegree:ParentalLevelOfEducation.mastersdegree);
+        student.setTestPreparationCourse(Math.random()>0.5?TestPreparationCourse.completed:TestPreparationCourse.none);
+        Random random = new Random();
+        student.setMathScore(random.nextInt(100));
+        student.setReadingScore(random.nextInt(100));
+        student.setWritingScore(random.nextInt(100));
+        student.setLunch(Math.random()>0.5?Lunch.freereduced:Lunch.standard);
+        return student;
+    }
     @Override
     public String toString() {
         return "Student{" +

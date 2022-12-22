@@ -1,10 +1,6 @@
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import kmeans.KMeans;
 
 
 public class Main extends Application {
@@ -14,12 +10,10 @@ public class Main extends Application {
     }
     @Override
     public void start(Stage stage) throws InterruptedException {
-/*
+
         KMeans kmeans = new KMeans();
         kmeans.init();
         kmeans.calculate();
-*/
-        CsvToList csvToList=new CsvToList();
-        csvToList.getAllStudents();
+
     }
 }

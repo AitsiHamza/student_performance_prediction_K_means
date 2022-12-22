@@ -1,46 +1,48 @@
-import java.util.*;
+package kmeans;
 
-import javafx.scene.Node;
+import entities.Student;
 import javafx.scene.Scene;
-import javafx.scene.chart.ScatterChart;
-import javafx.stage.Stage;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class KMeans {
 
     //Number of Clusters. This metric should be related to the number of points
     private int NUM_CLUSTERS = 5;
-    //Number of Points
-    private int NUM_POINTS = 100;
     //Min and Max X and Y
-    private static final int MIN_COORDINATE = 1;
+    private static final int MIN_COORDINATE = 0;
     private static final int MAX_COORDINATE = 100;
 
-    private List<Point> points;
+    private List<Student> students;
     private List<Cluster> clusters;
-    private Map<Integer,List<Point>> matClusters;
+    private Map<Integer,List<Student>> matClusters;
 
     public KMeans() {
-        this.points = new ArrayList<Point>();
-        this.clusters = new ArrayList<Cluster>();
-        matClusters=new HashMap<Integer,List<Point>>();
-		/*for (int i = 0; i < NUM_CLUSTERS; i++) {
-			matClusters.put(i,null);
-		}*/
+        this.students = new ArrayList<>();
+        this.clusters = new ArrayList<>();
+        matClusters=new HashMap<Integer,List<Student>>();
     }
 
 
 
     //Initializes the process
     public void init() {
-        //Create Points
-        points = Point.createRandomPoints(MIN_COORDINATE,MAX_COORDINATE,NUM_POINTS);
+        CsvToList csvToList=new CsvToList();
+        students = csvToList.getAllStudents();
 
         //Create Clusters
         //Set Random Centroids
         for (int i = 0; i < NUM_CLUSTERS; i++) {
             Cluster cluster = new Cluster(i);
-            Point centroid = Point.createRandomPoint(MIN_COORDINATE,MAX_COORDINATE);
+            Student centroid = new Student();
+            centroid=centroid.randomStudent();
             cluster.setCentroid(centroid);
             clusters.add(cluster);
         }
@@ -66,7 +68,7 @@ public class KMeans {
             //Clear cluster state
             clearClusters();
 
-            List<Point> lastCentroids = getCentroids();
+            List<Student> lastCentroids = getCentroids();
 
             //Assign points to the closer cluster
             assignCluster();
@@ -76,17 +78,13 @@ public class KMeans {
 
             iteration++;
 
-            List<Point> currentCentroids = getCentroids();
+            List<Student> currentCentroids = getCentroids();
 
             //Calculates total distance between new and old Centroids
             double distance = 0;
             for(int i = 0; i < lastCentroids.size(); i++) {
-                distance += Point.distance(lastCentroids.get(i),currentCentroids.get(i));
+                distance += Student.distance(lastCentroids.get(i),currentCentroids.get(i));
             }
-/*        	System.out.println("#################");
-        	System.out.println("Iteration: " + iteration);
-        	System.out.println("Centroid distances: " + distance);
-        	plotClusters();*/
             System.out.println("***************New iteration***************");
             plotClusters_JavaFX(iteration);
             if(distance == 0) {
@@ -101,12 +99,11 @@ public class KMeans {
         }
     }
 
-    private List<Point> getCentroids() {
-        List<Point> centroids = new ArrayList<Point>(NUM_CLUSTERS);
+    private List<Student> getCentroids() {
+        List<Student> centroids = new ArrayList<>(NUM_CLUSTERS);
         for(Cluster cluster : clusters) {
-            Point aux = cluster.getCentroid();
-            Point point = new Point(aux.getList());
-            centroids.add(point);
+            Student student = cluster.getCentroid();
+            centroids.add(student);
         }
         return centroids;
     }
@@ -117,44 +114,44 @@ public class KMeans {
         int cluster = 0;
         double distance = 0.0;
 
-        for(Point point : points) {
+        for(Student student : students) {
             min = max;
             for(int i = 0; i < NUM_CLUSTERS; i++) {
                 Cluster c = clusters.get(i);
-                distance = Point.distance(point, c.getCentroid());
+                distance = Student.distance(student, c.getCentroid());
                 if(distance < min){
                     min = distance;
                     cluster = i;
                 }
             }
-            point.setCluster(cluster);
-            clusters.get(cluster).addPoint(point);
+            student.setCluster(cluster);
+            clusters.get(cluster).addStudent(student);
         }
     }
 
     private void calculateCentroids() {
         for(Cluster cluster : clusters) {
 
-            List<Point> list = cluster.getPoints();
+            List<Student> list = cluster.getStudents();
             int n_points = list.size();
-            List<Double> sum = new ArrayList<Double>();
+            List<Integer> sum = new ArrayList<>();
 
 
 
-            for(Point point : list) {
+            for(Student student : list) {
 
                 if(sum.isEmpty())
-                    for(int start=0;start<2;start++)
-                        sum.add(point.getList().get(start));
+                    for(int start=0;start<7;start++)
+                        sum.add(student.getList().get(start));
                 else
-                    for(int start=0;start<2;start++)
-                        sum.set(start,point.getList().get(start)+sum.get(start));
+                    for(int start=0;start<7;start++)
+                        sum.set(start,student.getList().get(start)+sum.get(start));
 
             }
 
-            Point centroid = cluster.getCentroid();
+            Student centroid = cluster.getCentroid();
             if(n_points > 0) {
-                for(int start=0;start<2;start++)
+                for(int start=0;start<7;start++)
                     centroid.getList().set(start,sum.get(start)/n_points);
             }
         }
@@ -175,30 +172,17 @@ public class KMeans {
         XYChart.Series[] listSeries_centroid = new XYChart.Series[]{new XYChart.Series(),new XYChart.Series(),new XYChart.Series(),new XYChart.Series(),new XYChart.Series()};
 
         for (int i = 0; i < NUM_CLUSTERS; i++) {
-            listSeries[i].setName("Cluster"+i);
-            List<Point> points = matClusters.get(i);
-            for (Point p : points) {
-                System.out.println("->"+p.getList());
-                listSeries[i].getData().add(new XYChart.Data(p.getList().get(0),p.getList().get(1) ));
+            listSeries[i].setName("test.Cluster"+i);
+            List<Student> students = matClusters.get(i);
+            for (Student s : students) {
+                System.out.println("->"+s.getList());
+                listSeries[i].getData().add(new XYChart.Data(s.getList().get(5),s.getList().get(7) ));
             }
-            listSeries_centroid[i].getData().add(new XYChart.Data(clusters.get(i).centroid.getList().get(0),clusters.get(i).centroid.getList().get(1)));
+            listSeries_centroid[i].getData().add(new XYChart.Data(clusters.get(i).centroid.getList().get(5),clusters.get(i).centroid.getList().get(7)));
         }
-        //listSeries[0].getChart().setStyle("-fx-stroke: black; -fx-stroke-width: 1px; -fx-effect: null; -fx-stroke-dash-array: 10 10 10 10;");
 
-        System.out.println(listSeries[0].getChart());
-
-        if(listSeries[0].getNode()!=null){
-            System.out.println("#############################");
-            System.out.println("\tnode not null");
-            System.out.println("#############################");
-
-            //Node line = listSeries[0].getNode().lookup(".chart-series-line");
-            //line.setStyle("-fx-stroke: black; -fx-stroke-width: 1px; -fx-effect: null; -fx-stroke-dash-array: 10 10 10 10;");
-        }else{
-        }
         sc.getData().addAll(listSeries[0],listSeries[1],listSeries[2],listSeries[3],listSeries[4],
                 listSeries_centroid[0],listSeries_centroid[1],listSeries_centroid[2],listSeries_centroid[3],listSeries_centroid[4]);
-
 
         Scene scene  = new Scene(sc, 600, 600);
         scene.getStylesheets().add("styles/style.css");

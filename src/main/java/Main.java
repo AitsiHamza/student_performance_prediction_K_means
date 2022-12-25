@@ -14,10 +14,12 @@ public class Main extends Application {
     }
     @Override
     public void start(Stage stage) throws InterruptedException {
-
+/*
         KMeans kmeans = new KMeans();
         kmeans.init();
         kmeans.calculate();
-
+*/
+        CsvToList csvToList=new CsvToList();
+        csvToList.getAllStudents();
     }
 }

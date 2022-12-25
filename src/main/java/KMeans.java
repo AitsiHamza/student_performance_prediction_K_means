@@ -185,6 +185,8 @@ public class KMeans {
         }
         //listSeries[0].getChart().setStyle("-fx-stroke: black; -fx-stroke-width: 1px; -fx-effect: null; -fx-stroke-dash-array: 10 10 10 10;");
 
+        System.out.println(listSeries[0].getChart());
+
         if(listSeries[0].getNode()!=null){
             System.out.println("#############################");
             System.out.println("\tnode not null");
